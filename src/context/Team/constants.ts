@@ -1,0 +1,5 @@
+export const START_ACTION = 'Team/START_ACTION'
+export const SUCCESS_ACTION = 'Team/SUCCESS_ACTION'
+export const ERROR_ACTION = 'Team/ERROR_ACTION'
+export const RESET_ACTION = 'Team/RESET_ACTION'
+export const SEARCH_ACTION = 'Team/SEARCH_ACTION'
