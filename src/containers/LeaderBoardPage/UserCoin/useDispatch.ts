@@ -1,11 +1,17 @@
 import { useMemo } from 'react'
-import type { ResetAction, StartAction, StartActionPayload } from './types'
+import type {
+  ResetAction,
+  SearchAction,
+  StartAction,
+  StartActionPayload,
+} from './types'
 import { useDispatch as useReduxDispatch } from 'react-redux'
-import { RESET_ACTION, START_ACTION } from './constants'
+import { RESET_ACTION, SEARCH_ACTION, START_ACTION } from './constants'
 
 export interface Dispatch {
   readonly load: (payload?: StartActionPayload) => void
   readonly reset: () => void
+  readonly search: (search: string) => void
 }
 
 export const useDispatch = (): Dispatch => {
@@ -21,6 +27,12 @@ export const useDispatch = (): Dispatch => {
       reset: () => {
         dispatch<ResetAction>({
           type: RESET_ACTION,
+        })
+      },
+      search: (search) => {
+        dispatch<SearchAction>({
+          type: SEARCH_ACTION,
+          payload: { search },
         })
       },
     }),

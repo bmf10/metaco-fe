@@ -3,6 +3,7 @@ import type { RootState } from 'store'
 import type {
   ERROR_ACTION,
   RESET_ACTION,
+  SEARCH_ACTION,
   START_ACTION,
   SUCCESS_ACTION,
 } from './constants'
@@ -20,7 +21,7 @@ export interface User {
 export interface StartActionPayload {
   readonly perPage?: number
   readonly page?: number
-  readonly search?: number
+  readonly search?: string
 }
 
 export interface StartAction extends Action<typeof START_ACTION> {
@@ -48,11 +49,18 @@ export interface ErrorAction extends Action<typeof ERROR_ACTION> {
 
 export type ResetAction = Action<typeof RESET_ACTION>
 
+export interface SearchAction extends Action<typeof SEARCH_ACTION> {
+  readonly payload: {
+    readonly search: string
+  }
+}
+
 export type ReduxAction =
   | StartAction
   | SuccessAction
   | ErrorAction
   | ResetAction
+  | SearchAction
 
 export interface ReduxState extends StartActionPayload {
   readonly loading: boolean

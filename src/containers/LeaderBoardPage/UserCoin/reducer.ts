@@ -1,6 +1,7 @@
 import {
   ERROR_ACTION,
   RESET_ACTION,
+  SEARCH_ACTION,
   START_ACTION,
   SUCCESS_ACTION,
 } from './constants'
@@ -42,6 +43,11 @@ export const reducer: ReduxReducer = (
       return {
         ...state,
         message: undefined,
+      }
+    case SEARCH_ACTION:
+      return {
+        ...state,
+        ...action.payload,
       }
     default:
       return state

@@ -23,6 +23,7 @@ export interface StartActionPayload {
   readonly page?: number
   readonly teamId?: number
   readonly tournamentId?: number
+  readonly sort?: 'ascend' | 'descend' | 'asc' | 'desc' | null
 }
 
 export interface StartAction extends Action<typeof START_ACTION> {

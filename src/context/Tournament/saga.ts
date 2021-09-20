@@ -11,11 +11,24 @@ import type {
   ErrorAction,
   SearchAction,
   StartAction,
+  StartActionPayload,
   SuccessAction,
 } from './types'
 
+const mapPayload = (
+  payload?: StartActionPayload
+): StartActionPayload | undefined => {
+  if (!payload) return
+  return {
+    ...payload,
+    search:
+      payload.search && payload.search !== '' ? payload.search : undefined,
+  }
+}
+
 export function* loadSaga({ payload }: StartAction): SagaIterator {
-  const { data }: Response = yield call(load, payload)
+  const newPayload = mapPayload(payload)
+  const { data }: Response = yield call(load, newPayload)
   if (data) {
     yield put<SuccessAction>({
       payload: { ...data },

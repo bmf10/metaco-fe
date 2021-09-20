@@ -1,23 +1,39 @@
-import { call, put, takeLatest } from '@redux-saga/core/effects'
+import { call, put, takeLatest, select } from '@redux-saga/core/effects'
 import type { SagaIterator } from 'redux-saga'
 import { ERROR_ACTION, START_ACTION, SUCCESS_ACTION } from './constants'
 import { load, Response } from './services'
 import type {
   ErrorAction,
+  ReduxState,
   StartAction,
   StartActionPayload,
   SuccessAction,
 } from './types'
+import { selector } from './useSelector'
 
 const mapPayload = (
   payload?: StartActionPayload
 ): StartActionPayload | undefined => {
   if (!payload) return
-  return payload
+  return {
+    ...payload,
+    sort: payload.sort
+      ? payload.sort === 'ascend'
+        ? 'asc'
+        : 'desc'
+      : undefined,
+  }
 }
 
 export function* loadSaga({ payload }: StartAction): SagaIterator {
-  const newPayload = mapPayload(payload)
+  const state: ReduxState = yield select(selector)
+  const newPayload = mapPayload({
+    teamId: state.teamId,
+    tournamentId: state.tournamentId,
+    perPage: state.perPage,
+    sort: state.sort,
+    ...payload,
+  })
   const { data }: Response = yield call(load, newPayload)
   if (data) {
     yield put<SuccessAction>({

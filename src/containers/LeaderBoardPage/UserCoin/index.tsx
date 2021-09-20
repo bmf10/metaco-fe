@@ -1,5 +1,5 @@
-import { Table, TablePaginationConfig, Typography } from 'antd'
-import { FC, useEffect, useMemo } from 'react'
+import { Input, Table, TablePaginationConfig, Typography } from 'antd'
+import { FC, useCallback, useEffect, useMemo } from 'react'
 import useLeaderboard from './useRedux'
 
 const UserCoin: FC = () => {
@@ -17,6 +17,19 @@ const UserCoin: FC = () => {
 
   useEffect(() => dispatch.load({ page: 1 }), [dispatch])
 
+  const filterDropdown = useCallback(
+    () => (
+      <div style={{ padding: 8 }}>
+        <Input
+          onChange={(e) => dispatch.search(e.target.value)}
+          placeholder="Search by name"
+          allowClear
+        />
+      </div>
+    ),
+    [dispatch]
+  )
+
   const columns = useMemo(
     () => [
       {
@@ -28,6 +41,7 @@ const UserCoin: FC = () => {
         title: 'Name',
         dataIndex: 'name',
         key: 'name',
+        filterDropdown,
       },
       {
         title: 'Coin',
@@ -35,7 +49,7 @@ const UserCoin: FC = () => {
         key: 'coin',
       },
     ],
-    []
+    [filterDropdown]
   )
 
   return (

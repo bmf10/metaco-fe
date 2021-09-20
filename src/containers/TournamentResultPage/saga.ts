@@ -13,8 +13,8 @@ import { selector } from './useSelector'
 export function* loadSaga({ payload }: StartAction): SagaIterator {
   const state: ReduxState = yield select(selector)
   const { data }: Response = yield call(load, {
-    ...payload,
     tournamentId: state.tournamentId,
+    ...payload,
   })
   if (data) {
     yield put<SuccessAction>({

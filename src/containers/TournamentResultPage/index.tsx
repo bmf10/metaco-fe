@@ -1,4 +1,11 @@
-import { Button, notification, Popconfirm, Spin, Table } from 'antd'
+import {
+  AutoComplete,
+  Button,
+  notification,
+  Popconfirm,
+  Spin,
+  Table,
+} from 'antd'
 import Wrapper from 'components/Wrapper'
 import { FC, useCallback, useEffect, useMemo, useState } from 'react'
 import { useInjectReducer } from 'utils/injectReducer'
@@ -12,6 +19,8 @@ import { Result } from './types'
 import AddResult from './AddResult'
 import EditResult from './EditResult'
 import useDeleteResult from './DeleteResult/useRedux'
+import { FilterDropdownProps } from 'antd/lib/table/interface'
+import useTournament from 'context/Tournament/useRedux'
 
 const TournamentResult: FC = () => {
   useInjectReducer({ key: 'tournamentResult', reducer })
@@ -20,6 +29,7 @@ const TournamentResult: FC = () => {
   const { data, loading, message, page, perPage, total } = useSelector()
   const [edit, setEdit] = useState<Result>()
   const deleteResult = useDeleteResult()
+  const tournament = useTournament()
 
   const pagination = useMemo<TablePaginationConfig>(
     () => ({
@@ -54,6 +64,39 @@ const TournamentResult: FC = () => {
     [deleteResult.dispatch]
   )
 
+  const filterDropdown = useCallback(
+    (props: FilterDropdownProps) => (
+      <div style={{ padding: 8 }}>
+        <AutoComplete
+          placeholder="Filter By Tournament"
+          style={{ width: 300 }}
+          onFocus={() => tournament.dispatch.load}
+          disabled={loading}
+          onSearch={tournament.dispatch.search}
+          onSelect={(v, opts) =>
+            load({ tournamentId: opts.id as number, page: 1 })
+          }
+          onClear={() => load({ tournamentId: undefined })}
+          showSearch
+          allowClear
+        >
+          {tournament.state.data.map(({ id, title }, key) => (
+            <AutoComplete.Option id={id} key={key} value={title}>
+              {title}
+            </AutoComplete.Option>
+          ))}
+        </AutoComplete>
+      </div>
+    ),
+    [
+      load,
+      loading,
+      tournament.dispatch.load,
+      tournament.dispatch.search,
+      tournament.state.data,
+    ]
+  )
+
   const columns = useMemo(
     () => [
       {
@@ -70,6 +113,7 @@ const TournamentResult: FC = () => {
         title: 'Tournament',
         dataIndex: ['tournament', 'title'],
         key: 'tournament.title',
+        filterDropdown,
       },
       {
         title: 'Position',
@@ -87,7 +131,7 @@ const TournamentResult: FC = () => {
         render: action,
       },
     ],
-    [action]
+    [action, filterDropdown]
   )
 
   useEffect(() => load(), [load])
